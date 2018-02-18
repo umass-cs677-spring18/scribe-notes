@@ -1,0 +1,237 @@
+%\documentstyle[10pt,twoside]{article}
+%\documentstyle[twoside]{article}
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\usepackage{graphicx}
+\usepackage{url}
+
+%
+% The following commands sets up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\newcommand{\dnl}{\mbox{}\par}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf CMPSCI~677~~~Distributed and Operating Systems
+                        \hfill Spring 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+   \vspace*{4mm}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+%
+\renewcommand{\cite}[1]{[#1]}
+
+% \input{epsf}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{FIGURE-SIZE}{CAPTION}{FILENAME}
+\newcommand{\fig}[4]{
+            %\vspace{0.2 in}
+            \centerline{\includegraphics[scale=#2]{#4}}
+            \begin{center}
+            Figure \thelecnum.#1:~#3
+            \end{center}
+    }
+
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% Some useful equation alignment commands, borrowed from TeX
+\makeatletter
+\def\eqalign#1{\,\vcenter{\openup\jot\m@th
+  \ialign{\strut\hfil$\displaystyle{##}$&$\displaystyle{{}##}$\hfil
+      \crcr#1\crcr}}\,}
+\def\eqalignno#1{\displ@y \tabskip\@centering
+  \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+    &$\displaystyle{{}##}$\hfil\tabskip\@centering
+    &\llap{$##$}\tabskip\z@skip\crcr
+    #1\crcr}}
+\def\leqalignno#1{\displ@y \tabskip\@centering
+  \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+    &$\displaystyle{{}##}$\hfil\tabskip\@centering
+    &\kern-\displaywidth\rlap{$##$}\tabskip\displaywidth\crcr
+    #1\crcr}}
+\makeatother
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+
+
+% Some general latex examples and examples making use of the
+% macros follow.
+
+\begin{document}
+
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{7}{Process, Code and VM Migration}{Prashant Shenoy}{\textbf{Amber Madvariya}}
+
+\section{Server Design Factors}
+\subsection{Address Resolution}
+How does client figure out the port number to send the request to? For some standard services like ssh and https, the ports are standard like 22 and 80 respectively. However, for custom endpoints this is not possible. One obvious way to identify port is to hard-code it in the client code, however this is rarely feasible and is not advised. Directory services is the most standard way for port resolution in most cases (this is implemented in nginx). Sometimes for large clusters, having a meta-server dedicated exclusively for directory services is also advisable.
+
+\subsection{Request Processing}
+There are two types of request processing methods in modern servers:
+\begin{itemize}
+    \item \textbf{Iterative}: The server sits in a while loop serving requests. This method doesn't enable any concurrency and all requests are queued. This method is preferred in single-core single process servers.
+    \item \textbf{Concurrent}: The server executes each request as a separate thread. Preferred in multi-core multi-process systems.
+\end{itemize}
+
+\subsection{State}:
+Servers can be classified into three categories in terms of state:
+\begin{itemize}
+    \item \textbf{State-full:} Maintains state for clients in memory or cache. Can be used to maintain sessions of user activity.
+    \item \textbf{Stateless:} Doesn't maintain any state for clients.
+    \item \textbf{Soft State:} Maintains state for a certain amount of time by persisting data in cache. Discarding the existing state does not change the correctness of the system.
+\end{itemize}
+
+\subsection{Clustered Servers}
+For high volume services, scaling is achieved through tiering/clustering of servers. Each tiered level may be replicated and load is balanced across the clusters through a load balancer which assigns each incoming request to a server in the cluster. There are two methods of request assignment in clusters:
+\begin{itemize}
+    \item \textbf{Round Robin:} Requests are assigned in a round robin fashion. This approach isn't ideal or optimal for implementing user based sessions (activity by a single user in a small continuous time period).
+    \item \textbf{Session based:} Requests from a user session are routed to the same server in order to maintain state about that session.
+\end{itemize}
+
+For communication between the system and the client in a multi-tiered architecture, there are two methods:
+\begin{itemize}
+    \item \textbf{Switch Server:} Tier 1 hands off the client request to a server in the cluster and all further communication between the client and the server happens directly.
+    \item \textbf{Strict Multi-tier:} All the communication between the client and the cluster happens via tier 1.
+\end{itemize}
+    
+
+\section{Server Architectures}
+
+There are primarily four type of server architectures:
+\begin{itemize}
+    \item \textbf{Pure-Sequential}: Serves request one at a time in a single process server. Requests are queued in this case.
+    \item \textbf{Thread based Concurrent:} Spawns a new thread for each request.
+    \item \textbf{Process based Concurrent:} Spawns a new process for each request.
+    \item \textbf{Event-based Sequential:} Single process server, but is asynchronous and non-blocking to I/O. Since, I/O is not blocked while a request is being processed, other requests can be processed simultaneously.
+\end{itemize}
+
+Out of the four types, pure-sequential, thread based and process based are relatively easier to program as compared to event-based sequential.
+
+Efficiency:
+
+For a multi-core multi-process server, the efficacy of the four types can be ordered as:
+
+thread based $>$ process based $>$ event based $>$ pure sequential
+
+Thread based, process based and event based are better than pure sequential because of concurrency. Thread based and process based are better than event based because of higher parallelism. Thread based is better than process based because of low context switch overhead among threads as compared to processes.
+
+For a single core single process server, the efficacy can be ordered as:
+
+event based $>$ thread based $>$ process based $>$ pure sequential
+
+While the reasoning for the ordering of thread based, process based and pure sequential is the same as for the previous one, the efficacy for event based is highest in this case because of no context overhead and concurrency.
+
+\section{Process, Code and VM Migration}
+The motivation behind developing techniques for code, process and VM migration is that migrating these components of a system helps in improved performance and flexibility.
+
+There are two types of migration models:
+\begin{itemize}
+    \item \textbf{Process Migration:} Also known as strong mobility, this includes the migration of all the components of a process i.e. code, resources and execution state. Restarts from last saved state upon migration and involves significant transfer of data over the network.
+    \item \textbf{Code Migration:} Also known as weak mobility. In this model only the code is migrated and the process is restarted from the initial state on the destination machine. The network transfer overhead is low since only the code is transferred. Sender initiated migration is where the sender sends the code e.g. search queries whereas receiver initiated migration involves the reciever sending the code e.g. app requesting JS/Java code from server.
+\end{itemize}
+
+To decide whether to migrate a resource attached to a process or not, we look at the binding of the resource to the process. There are three types of resource to process bindings:
+\begin{itemize}
+    \item \textbf{Identifier:} Tightest possible binding. E.g. files 
+    \item \textbf{Value:} Not as tight as Identifier. E.g. libraries used in Java
+    \item \textbf{Type:} Weakest binding, not necessary to be transferred as long as functionality is fulfilled. E.g. local devices.
+\end{itemize}
+
+Apart from the resource binding, it is also necessary to look at the cost of moving resources which can also be classified into three categories:
+\begin{itemize}
+    \item \textbf{Unattached:} Very low cost of moving e.g files
+    \item \textbf{Fastened:} High low cost of moving e.g databases
+    \item \textbf{Fixed:} Can't be moved e.g. local devices, common end points.
+\end{itemize}
+
+The migration actions depending on the resource binding and their cost of transfer are tabulated below for different combinations:
+
+\begin{table}[htb]
+  %\caption{Migration actions for different resource classifications}
+  \centering
+\begin{tabular}{ |p{3.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}| }
+%\rowcolor{gray}
+\hline
+ & \textbf{Unattached} & \textbf{Fastened} & \textbf{Fixed} \\
+\hline
+By Identifier & MV (or GR) & GR (or MV) & GR \\ \hline
+By Value & CP (or MV, GR) & GR (or CP) & GR \\ \hline
+By Type & RB (or GR, CP) & RB (or GR, CP) & RB (or GR) \\ \hline
+\end{tabular}
+\end{table}
+
+where GR means establishing global system-wide references, MV means moving the resources, CP means copying the resource and RB means rebinding process to locally available resource.
+
+\subsection{VM Migration}
+Process and code migration in heterogeneous systems (i.e. destination architecture is different than source architecture) pose a challenge. Migration via interpreted codes is one possibility but it is often clumsy in practice and is almost never used. Moreover, interpreted code migration only supports weak mobility. In such cases, it is beneficial to look at techniques for VM migration. VMs can be migrated from one machine to another irrespective of architectural differences, without any noticeable down-time. There are two methods for VM migration:
+
+\begin{itemize}
+    \item \textbf{Pre-copy Migration:} The process of pre-copy migration can be listed down as:
+    \begin{enumerate}
+        \item Copy all memory pages to destination
+        \item Copy memory pages which were changed during the previous copy
+        \item Repeat step 2 until number of memory pages is small.
+        \item Stop VM, copy rest of memory pages at destination and start VM at the destination.
+    \end{enumerate}
+    The IP address of the source is also copied to the destination (since IP address is a logical entity). All I/Os are assumed on disk, otherwise disk resources also need to be copied. 
+    \item \textbf{Post-copy Migration:} The process of post-copy migration can be listed as:
+    \begin{enumerate}
+        \item Stop VM and move basic amount of pages to destination
+        \item Start executing on new machine
+        \item In case of page faults in the new VM, copy page from the source machine.
+    \end{enumerate}
+    Migration is very quick and the pages which were not transferred initially can be fetched asynchroously in the background.
+\end{itemize}
+
+
+\end{document}
+
