@@ -1,0 +1,269 @@
+%\documentstyle[10pt,twoside]{article}
+%\documentstyle[twoside]{article}
+\documentclass[twoside]{article}
+\setlength{\oddsidemargin}{0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.6 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\usepackage{graphicx}
+\usepackage{url}
+
+%
+% The following commands sets up the lecnum (lecture number)
+% counter and make various numbering schemes work relative
+% to the lecture number.
+%
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\newcommand{\dnl}{\mbox{}\par}
+
+%
+% The following macro is used to generate the header.
+%
+\newcommand{\lecture}[4]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{lecnum}{#1}
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { {\bf CMPSCI~677~~~Operating Systems
+                        \hfill Spring 2018} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Guest Lecture #1: #2  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribe: #4} }
+      \vspace{2mm}}
+   }
+   \end{center}
+   \markboth{Lecture #1: #2}{Lecture #1: #2}
+   \vspace*{4mm}
+}
+
+%
+% Convention for citations is authors' initials followed by the year.
+% For example, to cite a paper by Leighton and Maggs you would type
+% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
+% (To avoid bibliography problems, for now we redefine the \cite command.)
+%
+\renewcommand{\cite}[1]{[#1]}
+
+% \input{epsf}
+
+%Use this command for a figure; it puts a figure in wherever you want it.
+%usage: \fig{NUMBER}{FIGURE-SIZE}{CAPTION}{FILENAME}
+\newcommand{\fig}[4]{
+            \vspace{0.2 in}
+            \setlength{\epsfxsize}{#2}
+            \centerline{\epsfbox{#4}}
+            \begin{center}
+            Figure \thelecnum.#1:~#3
+            \end{center}
+    }
+
+% Use these for theorems, lemmas, proofs, etc.
+\newtheorem{theorem}{Theorem}[lecnum]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+
+% Some useful equation alignment commands, borrowed from TeX
+\makeatletter
+\def\eqalign#1{\,\vcenter{\openup\jot\m@th
+  \ialign{\strut\hfil$\displaystyle{##}$&$\displaystyle{{}##}$\hfil
+      \crcr#1\crcr}}\,}
+\def\eqalignno#1{\displ@y \tabskip\@centering
+  \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+    &$\displaystyle{{}##}$\hfil\tabskip\@centering
+    &\llap{$##$}\tabskip\z@skip\crcr
+    #1\crcr}}
+\def\leqalignno#1{\displ@y \tabskip\@centering
+  \halign to\displaywidth{\hfil$\displaystyle{##}$\tabskip\z@skip
+    &$\displaystyle{{}##}$\hfil\tabskip\@centering
+    &\kern-\displaywidth\rlap{$##$}\tabskip\displaywidth\crcr
+    #1\crcr}}
+\makeatother
+
+% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
+
+
+
+% Some general latex examples and examples making use of the
+% macros follow.
+
+\begin{document}
+
+%FILL IN THE RIGHT INFO.
+%\lecture{**LECTURE-NUMBER**}{**DATE**}{**LECTURER**}{**SCRIBE**}
+\lecture{1}{January 23}{TO BE FILLED}{\textbf{Daniel Thiyagu}}
+
+\section{Application Agnostic RPC}
+
+\textbf{SOAP:} SOAP is an application agnostic RPC Protocol and is a web services definition language. RPC's hook into cloud computing, recently amazon deprecated SOAP and replaced it with REST.
+
+\section{Differences between HPC and Data Center} 
+\textbf{High Performance Computing:} 
+\begin{itemize}
+  \item Generally managed and used by scientific community.
+  \item They focus on high computational workloads.
+  \item The types of machines are Highly Parallel Mainframes.
+  \item Example: Used in weather forecasting.
+\end{itemize}
+
+\textbf{Data Center:} 
+\begin{itemize}
+  \item Generally managed and associated with enterprises.
+  \item They focus on collecting data.
+  \item They don't focus on high computational workloads.
+\end{itemize}
+
+
+\section{Types of Data Center} 
+\textbf{Traditional Data Center:} 
+\begin{itemize}
+  \item Sys admins monitor and manage servers.
+  \item They schedule process to be run.
+  \item Applications run on physical servers.
+  \item They use Storage Array Networks(SAN) \& Network Attached Storage(NAS). SAN and NAS : Provides an illusion of shared disk among servers. NAS: File system abstraction, attached file system to all servers in a network.
+\end{itemize}
+\textbf{Modern Data Center:} 
+\begin{itemize}
+  \item Dynamic Larger Scale
+  \item They transfer process to get better efficiency.
+  \item Applications run on virtual machines.
+  \item Increased automation allows larger scales.
+\end{itemize}
+
+\textbf{Modular Data Center:} 
+They have an inbuilt cooling infrastructure and inside shipping containers are placed data centers and they are like plug and play.
+
+\subsection{How does FB distributes wall feed?}
+Data is not present in one data center, they touch a lot of servers and hence more complex process like load balancing and pipelining would be different. FB wall is generally formed on demand and prioritize preference and popularity.
+
+\subsection{Does Archived Old Data have specialized storage centers ?}
+
+Maybe. It is dependent on the company and depends on ratio of storage to compute.
+
+
+\section{MGHPCC - Massachusetts Green High Performance Computing Cluster}: 
+\begin{itemize}
+  \item MGHPCC - multi tenant Datacenter - Only infrastructure level optimization possible, whereas in a single-tenant DC we can move applications around.
+  \item They are managed remotely, servers have a black pane ie. remote bios and can install new OS. They also have a remote power switch. They also have internet connectivity.
+  \item Electricity is cheaper in holyoke, land cost is cheaper, fiber networking(Springfield to boston available, so reduces network latency) and Water is used as a form of coolant, which makes Holyoke ideal. Power used is Green - renewable energy.
+  \item It requires 15 MWatts to be in operation
+  
+\end{itemize}
+
+\section{VM Migration in a LAN}: 
+It migrates memory state, migrating disk state is more complex. In Data Centers, disk memory is shared and therefore migration is simple. When we go outside of LAN, it becomes WAN, and IP is based on geographical location. 
+Data Center Networking is a research area, 
+
+\section{Server Virtualization}:
+\begin{itemize}
+  \item VM aware machine: Trap into lower level hypervisor
+  \item HVM : Hardware Virtual Machine Technology
+  \item KVM : Linux
+  \item Xen : Used by research community for migration, load balancing research, etc. It is cheap virtualization for the masses. They worked with Microsoft team for virtualizing Microsoft Windows.
+\end{itemize}
+
+\subsection{Why was x86 not virtualized previously ?}:
+It was not possible because priviledged instructions were an issue, they interrupt and call handler to handle it. VMware was the first to virtualize it by inserting dynamic calls into the lower level handlers. Then x86 were fixed to be free from this issue in recent years.
+
+\subsection{Virtualization in Data Centers}:
+\textbf{Virtual Servers:} 
+\begin{itemize}
+  \item Balance/consolidate load
+  \item Faster Deployment
+  \item Easy Maintenance
+ 
+\end{itemize}
+
+
+\textbf{Virtual Desktops:} 
+\begin{itemize}
+  \item host employee desktops in VM
+  \item Thin Client Model
+\end{itemize}
+
+
+\section{Data Centers}
+\textbf{Resource Management:} 
+\begin{itemize}
+  \item We need to keep it as highly utilized as possible
+  \item Apps have variable/unpredictable workload.
+  \item Want High Performance and Low Cost
+  \item Automated Resource management
+\end{itemize}
+
+\textbf{Energy Efficiency:} 
+\begin{itemize}
+  \item Servers consume a lot of energy
+  \item Be Green
+  \item Save Money
+\end{itemize}
+
+In general, it takes 50\% power to run the computers and the remaining power to cool them.
+ 
+ \textbf{Reliability challenges:} 
+ \begin{itemize}
+  \item 0.5\% overheat
+  \item Power Distribution unit failures 
+  \item Network Rewiring - as you add/remove systems, etc.
+\end{itemize}
+
+ 
+ \textbf{Data Center Cost:} 
+ 
+ $${Power Usage Effectiveness} =\frac{{IT Power}}{{Total Power}}$$
+
+ \textbf{Economy of Scale:} 
+ \textbf{Location impacts:} 
+ \begin{itemize}
+  \item presence of customers nearby
+  \item cooling
+  \item Generation of power.
+  \item presence of already existing grid power infrastructure.
+\end{itemize}
+
+
+\section{Cloud}
+\textbf{What is Cloud?} It is remote, you pay as you go, we get high scalability, shared infrastructure.
+
+\textbf{IaaS} Infrastructure as a Service: Eg:Google, Aws
+
+\textbf{PaaS} Platform as a Service: Eg:Azure, Google App Engine
+
+\textbf{SaaS} Software as a Service: Eg:Applications like Salesforce, Gmail.
+
+\textbf{Hybrid Cloud:} It is a mix of private and public cloud usage.
+
+\textbf{Programming Models:}
+ \begin{itemize}
+  \item Client Server(Interactive)
+  \item Batch Processing(Not Interactive)
+  \item Map reduce.(Not Interactive)
+\end{itemize}
+
+
+\textbf{Future Challenges:}
+ \begin{itemize}
+  \item Privacy/Security
+  \item Extreme Scalability
+  \item Programming Models
+\end{itemize}
+\end{document}
